@@ -32,7 +32,7 @@ void loop() {
   display.clearDisplay();
   display.setTextSize(1);
   display.setCursor(0,0);
-  display.print("Lviv Poly / Env Monitor");
+  display.print("Env Monitor");
 
   display.setTextSize(2);
   display.setCursor(0, 20);
