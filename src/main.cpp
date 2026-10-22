@@ -8,7 +8,7 @@
 #define SCREEN_HEIGHT 64
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
-#define DHTPIN D4
+#define DHTPIN D6
 #define DHTTYPE DHT22
 DHT dht(DHTPIN, DHTTYPE);
 
@@ -32,7 +32,7 @@ void loop() {
   display.clearDisplay();
   display.setTextSize(1);
   display.setCursor(0,0);
-  display.print("Lviv Poly / Env Monitor");
+  display.print("Env Monitor");
 
   display.setTextSize(2);
   display.setCursor(0, 20);
