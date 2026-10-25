@@ -3,6 +3,13 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <DHT.h>
+#include <ESP8266WiFi.h>
+#include <ESP8266HTTPClient.h>
+#include <WiFiClient.h>
+
+const char* ssid = "Xiaomi 17T";
+const char* password = "12345678";
+String serverName = "http://DENfan.pythonanywhere.com/update";
 
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
@@ -23,9 +30,9 @@ void setup() {
   
   display.clearDisplay();
   display.setTextColor(WHITE);
-}
+  
+  delay(4000); 
 
-void loop() {
   float h = dht.readHumidity();
   float t = dht.readTemperature();
 
@@ -37,14 +44,59 @@ void loop() {
   display.setTextSize(2);
   display.setCursor(0, 20);
   display.print("T: ");
-  display.print(t, 1);
+  if (isnan(t)) {
+    display.print("--");
+  } else {
+    display.print(t, 1);
+  }
   display.print(" C");
 
   display.setCursor(0, 45);
   display.print("H: ");
-  display.print(h, 1);
+  if (isnan(h)) {
+    display.print("--");
+  } else {
+    display.print(h, 1);
+  }
   display.print(" %");
 
   display.display();
-  delay(2000);
+
+  Serial.println();
+  Serial.print("Connecting to WiFi");
+  WiFi.begin(ssid, password);
+  
+  int attempts = 0;
+  while (WiFi.status() != WL_CONNECTED && attempts < 20) {
+    delay(500);
+    Serial.print(".");
+    attempts++;
+  }
+
+  if (WiFi.status() == WL_CONNECTED && !isnan(t) && !isnan(h)) {
+    WiFiClient client;
+    HTTPClient http;
+    
+    String serverPath = serverName + "?t=" + String(t) + "&h=" + String(h);
+    
+    http.begin(client, serverPath);
+    int httpResponseCode = http.GET();
+    
+    if (httpResponseCode > 0) {
+      Serial.print("\nHTTP Response code: ");
+      Serial.println(httpResponseCode);
+    } else {
+      Serial.print("\nError code: ");
+      Serial.println(httpResponseCode);
+    }
+    http.end();
+  }
+  
+  WiFi.disconnect(); 
+  
+  Serial.println("Going to deep sleep...");
+  ESP.deepSleep(30e6); 
+}
+
+void loop() {
 }
