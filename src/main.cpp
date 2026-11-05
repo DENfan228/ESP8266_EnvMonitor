@@ -6,7 +6,7 @@
 #include <WiFiClient.h>
 
 // Налаштування Wi-Fi та сервера
-const char* ssid = "Xiaomi 17T";
+const char* ssid = "test_qubik";
 const char* password = "12345678";
 String serverName = "http://DENfan.pythonanywhere.com/update";
 
